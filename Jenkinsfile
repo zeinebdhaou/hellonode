@@ -1,30 +1,30 @@
 pipeline {
-  agent {
-    kubernetes {
-      label 'hellonode'
-      defaultContainer 'jnlp'
-      yaml """
-apiVersion: v1
-kind: Pod
-spec:
-  # Use service account that can deploy to all namespaces
-  serviceAccountName: jenkins
-  containers:
-  - name: docker
-    image: docker:latest
-    command:
-    - cat
-    tty: true
-    volumeMounts:
-    - mountPath: /var/run/docker.sock
-      name: docker-sock
-  volumes:
-    - name: docker-sock
-      hostPath:
-        path: /var/run/docker.sock
-"""
-}
-   }
+    agent {
+        kubernetes {
+            yaml '''
+        apiVersion: v1
+        kind: Pod
+        spec:
+          volumes:
+            - name: build-cache
+              persistentVolumeClaim: 
+                claimName: build-cache
+          serviceAccountName: jenkins
+          containers:
+         - name: docker
+            image: myreg/docker:1
+            volumeMounts:
+            - name: build-cache
+              mountPath: /var/lib/docker
+              subPath: docker
+            command:
+            - cat
+            tty: true
+            securityContext:
+              privileged: true
+       '''
+        }
+    }
   stages {
    stage ('Clone repository'){
     steps {
