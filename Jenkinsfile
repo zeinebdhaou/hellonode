@@ -7,11 +7,6 @@ node {
         kind: Pod
         spec:
           containers:
-          - name: maven
-            image: maven:alpine
-            command:
-            - cat
-            tty: true
           - name: docker
             image: docker:latest
             command:
@@ -37,7 +32,7 @@ node {
         /* This builds the actual image; synonymous to
          * docker build on the command line */
 
-        app = docker.build("releaseworks/hellonode")
+        app = docker.build("samirtata/hellonode")
     }
 
     stage('Test image') {
