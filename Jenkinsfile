@@ -32,13 +32,14 @@ spec:
 }
    }
   stages {
+   steps {
     stage('Clone repository') {
         /* Let's make sure we have the repository cloned to our workspace */
         checkout scm
     }
-
-    stage('Build imag') {
-      steps {
+  }
+  stage('Build imag') {
+    steps {
         container('docker') {
           sh """
              docker build -t hellonode .
