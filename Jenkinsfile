@@ -1,40 +1,41 @@
+// Uses Declarative syntax to run commands inside a container.
 pipeline {
-  agent none
-  triggers {
-    pollSCM('*/1 * * * *')
-  }
-  stages {
-    //Build container image
-    stage('Build') {
-      agent {
+    agent {
         kubernetes {
-          label 'jenkinsrun'
-          defaultContainer 'dind'
-          yaml """
-apiVersion: v1
+            yaml '''
 kind: Pod
+metadata:
+  name: kaniko
+  namespace: default
 spec:
   containers:
-  - name: dind
-    image: docker:18.05-dind
-    securityContext:
-      privileged: true
+  - name: shell
+    image: gcr.io/kaniko-project/executor:debug
+    imagePullPolicy: IfNotPresent
+    env:
+     - name: container
+       value: "docker"
+    command:
+     - /busybox/cat
+    tty: true
     volumeMounts:
-      - name: dind-storage
-        mountPath: /var/lib/docker
+      - name: docker-config
+        mountPath: /kaniko/.docker
   volumes:
-    - name: dind-storage
-      emptyDir: {}
-"""
-        } // kubernetes
-      } // agent
-      steps {
-        container('dind') {
-          script {
-              def app = docker.build("app:${env.BUILD_ID}")
-          } //script
-        } //container
-      } //steps
-    } //stage(build)
-  } //stages
-} //pipeline
+    - name: docker-config
+      configMap:
+        name: docker-config
+'''
+            defaultContainer 'shell'
+        }
+    }
+    stages {
+       stage('Build') {
+           steps {
+             container('shell'){
+               sh "/kaniko/executor --dockerfile `pwd`/Dockerfile --context `pwd` --destination=hellonode"
+          }
+        }
+        }
+}
+}
