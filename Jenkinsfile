@@ -12,7 +12,7 @@ node {
          * docker build on the command line */
 
         // app = docker.build("samirtata/hellonode")
-        sh 'sudo docker build -t samirtata/hellonode . '
+        sh 'docker build -t samirtata/hellonode . '
         echo 'Build Image Completed' 
     }
 
