@@ -32,7 +32,6 @@ spec:
         container('dind') {
           script {
               def app = docker.build("app:${env.BUILD_ID}")
-            }
           } //script
         } //container
       } //steps
