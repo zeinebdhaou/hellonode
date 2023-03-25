@@ -6,7 +6,7 @@ pipeline {
 kind: Pod
 metadata:
   name: kaniko
-  namespace: default
+  namespace: samir
 spec:
   containers:
   - name: shell
