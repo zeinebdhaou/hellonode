@@ -1,27 +1,6 @@
 node {
     def app
-    agent {
-     kubernetes {
-       yaml '''
-        apiVersion: v1
-        kind: Pod
-        spec:
-          containers:
-          - name: docker
-            image: docker:latest
-            command:
-            - cat
-            tty: true
-            volumeMounts:
-             - mountPath: /var/run/docker.sock
-               name: docker-sock
-          volumes:
-          - name: docker-sock
-            hostPath:
-              path: /var/run/docker.sock    
-        '''
-     }
-   }
+  
     stage('Clone repository') {
         /* Let's make sure we have the repository cloned to our workspace */
 
@@ -32,7 +11,9 @@ node {
         /* This builds the actual image; synonymous to
          * docker build on the command line */
 
-        app = docker.build("samirtata/hellonode")
+        // app = docker.build("samirtata/hellonode")
+        sh 'sudo docker build -t samirtata/hellonode . '
+        echo 'Build Image Completed' 
     }
 
     stage('Test image') {
