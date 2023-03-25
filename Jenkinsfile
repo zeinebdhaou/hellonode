@@ -1,43 +1,53 @@
 pipeline {
-    agent {
+  agent none
+//check every minute for changes
+  triggers {
+    pollSCM('*/1 * * * *')
+  }
+  stages {
+    //Build container image
+    stage('Build') {
+      agent {
         kubernetes {
-            yaml '''
-        apiVersion: v1
-        kind: Pod
-        spec:
-          volumes:
-            - name: build-cache
-              persistentVolumeClaim: 
-                claimName: build-cache
-          serviceAccountName: jenkins-agents
-          containers:
-         - name: docker
-            image: myreg/docker:1
-            volumeMounts:
-            - name: build-cache
-              mountPath: /var/lib/docker
-              subPath: docker
-            command:
-            - cat
-            tty: true
-            securityContext:
-              privileged: true
-       '''
+          label 'jenkinsrun'
+          defaultContainer 'dind'
+          yaml """
+apiVersion: v1
+kind: Pod
+spec:
+  containers:
+  - name: dind
+    image: docker:18.05-dind
+    securityContext:
+      privileged: true
+    volumeMounts:
+      - name: dind-storage
+        mountPath: /var/lib/docker
+  volumes:
+    - name: dind-storage
+      emptyDir: {}
+"""
         }
-    }
-    stages {
-
-        // checkout and test
-
-        stage('Build UI Docker Image') {
-            steps {
-                container('docker') {
-                      sh 'dockerd & > /dev/null'
-                      sleep(time: 10, unit: "SECONDS")
-                      sh "docker build  -t myreg/myapp/ui:$BUILD_NUMBER ."
-                      sh "docker push myreg/myapp/ui:$BUILD_NUMBER"
-                }
+      }
+      steps {
+        container('dind') {
+          script {
+              def app = docker.build("app:${env.BUILD_ID}")
             }
+          } //script
+        } //container
+      } //steps
+    } //stage(build)
+    stage('Push image') {
+        /* Finally, we'll push the image with two tags:
+         * First, the incremental build number from Jenkins
+         * Second, the 'latest' tag.
+         * Pushing multiple tags is cheap, as all the layers are reused. */
+        docker.withRegistry('https://registry.hub.docker.com', 'docker-hub-credentials') {
+            app.push("${env.BUILD_NUMBER}")
+            app.push("latest")
         }
     }
-}
+  
+  } //stages
+} //pipeline
