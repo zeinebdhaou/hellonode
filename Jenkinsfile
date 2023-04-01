@@ -1,4 +1,4 @@
-// Uses Declarative syntax to run commands inside a container.
+    
 pipeline {
     agent {
         kubernetes {
@@ -29,7 +29,7 @@ spec:
             defaultContainer 'shell'
         }
     }
-   node(POD_LABEL) {
+   stages {
        stage('Build') {
            steps {
              container('shell'){
