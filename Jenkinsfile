@@ -29,13 +29,12 @@ spec:
             defaultContainer 'shell'
         }
     }
-    stages {
+   node(POD_LABEL) {
        stage('Build') {
            steps {
              container('shell'){
                sh "/kaniko/executor --dockerfile `pwd`/Dockerfile --context `pwd` --destination=hellonode"
           }
         }
-        }
-}
+   }
 }
