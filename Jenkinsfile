@@ -22,7 +22,7 @@ spec:
     - name: docker-config
       configMap:
         name: docker-config
-'''{
+'''){
   node(POD_LABEL) {
        stage('Build') {
            steps {
@@ -33,4 +33,3 @@ spec:
       }
    }
 }
-)
