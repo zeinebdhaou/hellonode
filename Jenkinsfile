@@ -24,12 +24,11 @@ spec:
         name: docker-config
 '''){
   node(POD_LABEL) {
-       stage('Build') {
-           steps {
-             container('shell'){
-               sh "/kaniko/executor --dockerfile `pwd`/Dockerfile --context `pwd` --destination=hellonode"
-          }
+     stage('Build') {
+      container('shell') {
+        stage('Build a Maven project') {
+          sh '/kaniko/executor --dockerfile `pwd`/Dockerfile --context `pwd` --destination=hellonode'
         }
       }
-   }
+    }
 }
