@@ -1,8 +1,5 @@
     
-pipeline {
-    agent {
-        kubernetes {
-            yaml '''
+podTemplate(yaml: '''
 kind: Pod
 metadata:
   name: kaniko
@@ -25,11 +22,8 @@ spec:
     - name: docker-config
       configMap:
         name: docker-config
-'''
-            defaultContainer 'shell'
-        }
-    }
-   stages {
+'''{
+  node(POD_LABEL) {
        stage('Build') {
            steps {
              container('shell'){
