@@ -20,7 +20,7 @@ spec:
      stage('Build') {
       container('shell') {
         stage('Build a Maven project') {
-          sh '/kaniko/executor --dockerfile `pwd`/Dockerfile --context `pwd` --destination=hellonode'
+          sh '/kaniko/executor  --context `pwd` --destination=hellonode'
         }
       }
     }
