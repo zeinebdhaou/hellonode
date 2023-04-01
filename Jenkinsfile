@@ -36,5 +36,6 @@ spec:
                sh "/kaniko/executor --dockerfile `pwd`/Dockerfile --context `pwd` --destination=hellonode"
           }
         }
+      }
    }
 }
