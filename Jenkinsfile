@@ -18,6 +18,7 @@ spec:
 '''){
   node(POD_LABEL) {
      stage('Build') {
+      git 'https://github.com/samirathorizon/hellonode.git'
       container('shell') {
         stage('Build a Maven project') {
           sh '/kaniko/executor  --context `pwd` --destination=hellonode'
