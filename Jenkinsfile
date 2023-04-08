@@ -22,7 +22,7 @@ spec:
       container('shell') {
         stage('Build a Maven project') {
      //     sh '/kaniko/executor  --context `pwd` --destination=hellonode --no-push'
-     sh '/kaniko/executor  --context `pwd` --destination=hellonode'
+     sh '/kaniko/executor  --context `pwd` --destination=samirathorizon/hellonode'
 
         }
       }
