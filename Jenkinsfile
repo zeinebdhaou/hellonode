@@ -3,7 +3,7 @@ podTemplate(yaml: '''
 kind: Pod
 metadata:
   name: kaniko
-  namespace: samirtata
+  namespace: zeinebdhaou
 spec:
   containers:
   - name: shell
@@ -18,7 +18,7 @@ spec:
 '''){
   node(POD_LABEL) {
      stage('Build') {
-      git 'https://github.com/samirathorizon/hellonode.git'
+      git 'https://github.com/zeinebdhaou/hellonode.git'
       container('shell') {
         stage('Build a Maven project') {
            sh '/kaniko/executor  --context `pwd` --destination=hellonode --no-push'
